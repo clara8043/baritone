@@ -17,11 +17,14 @@
 
 package baritone.launch.mixins;
 
+import baritone.Baritone;
 import baritone.api.BaritoneAPI;
 import baritone.api.IBaritone;
 import baritone.api.event.events.ChunkEvent;
 import baritone.api.event.events.type.EventState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraft.network.play.server.SPacketChat;
 import net.minecraft.network.play.server.SPacketChunkData;
 import net.minecraft.network.play.server.SPacketCombatEvent;
 import org.spongepowered.asm.mixin.Mixin;
@@ -88,6 +91,23 @@ public class MixinNetHandlerPlayClient {
         for (IBaritone ibaritone : BaritoneAPI.getProvider().getAllBaritones()) {
             if (ibaritone.getPlayerContext().player().connection == (NetHandlerPlayClient) (Object) this) {
                 ibaritone.getGameEventHandler().onPlayerDeath();
+            }
+        }
+    }
+
+    @Inject(
+            method = "handleChat",
+            at = @At(
+                    value = "HEAD"
+            )
+    )
+    private void handleChat(SPacketChat packetIn, CallbackInfo ci) {
+        if (!Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
+            return;
+        }
+        for (IBaritone ibaritone : BaritoneAPI.getProvider().getAllBaritones()) {
+            if (ibaritone.getPlayerContext().player().connection == (NetHandlerPlayClient) (Object) this) {
+                ((Baritone) ibaritone).getChatControlBehavior().onChatReceived(packetIn.getChatComponent());
             }
         }
     }

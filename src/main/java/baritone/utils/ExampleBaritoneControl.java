@@ -193,6 +193,11 @@ public class ExampleBaritoneControl extends Behavior implements Helper {
             logDirect("Goal: " + goal);
             return true;
         }
+        if (msg.startsWith("controlledby")) {
+            baritone.getChatControlBehavior().controlledBy = msg.substring("controlledby".length()).trim();
+            logDirect("Will now listen to commands from " + baritone.getChatControlBehavior().controlledBy);
+            return true;
+        }
         if (msg.equals("path")) {
             if (pathingBehavior.getGoal() == null) {
                 logDirect("No goal.");

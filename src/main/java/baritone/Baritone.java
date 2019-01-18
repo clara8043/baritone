@@ -78,6 +78,7 @@ public class Baritone implements IBaritone {
     private LookBehavior lookBehavior;
     private MemoryBehavior memoryBehavior;
     private InputOverrideHandler inputOverrideHandler;
+    private ChatControlBehavior chatControlBehavior;
 
     private FollowProcess followProcess;
     private MineProcess mineProcess;
@@ -110,6 +111,7 @@ public class Baritone implements IBaritone {
             new InventoryBehavior(this);
             inputOverrideHandler = new InputOverrideHandler(this);
             new ExampleBaritoneControl(this);
+            chatControlBehavior = new ChatControlBehavior(this);
         }
 
         this.pathingControlManager = new PathingControlManager(this);
@@ -127,6 +129,10 @@ public class Baritone implements IBaritone {
         }
 
         this.initialized = true;
+    }
+
+    public ChatControlBehavior getChatControlBehavior() {
+        return chatControlBehavior;
     }
 
     @Override
