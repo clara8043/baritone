@@ -34,10 +34,10 @@ public class ChatControlBehavior extends Behavior {
             return;
         }
         String text = component.getUnformattedText();
-        String[] prefixes = {"<" + controlledBy + ">", controlledBy + " whispers: ", controlledBy + ": "};
+        String[] prefixes = {"<" + controlledBy + "> ", controlledBy + " whispers: ", controlledBy + ": "};
         for (String str : prefixes) {
             if (text.startsWith(str)) {
-                String command = text.substring(str.length());
+                String command = text.substring(str.length()).trim();
                 Helper.HELPER.logDirect("Executing command " + command + " because of chat message " + text);
                 baritone.getGameEventHandler().onSendChatMessage(new ChatEvent(ctx.player(), command));
             }
