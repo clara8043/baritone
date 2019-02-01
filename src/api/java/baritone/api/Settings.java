@@ -164,6 +164,8 @@ public final class Settings {
      */
     public final Setting<Boolean> considerPotionEffects = new Setting<>(true);
 
+    public final Setting<Boolean> f = new Setting<>(false);
+
     /**
      * This is the big A* setting.
      * As long as your cost heuristic is an *underestimate*, it's guaranteed to find you the best path.

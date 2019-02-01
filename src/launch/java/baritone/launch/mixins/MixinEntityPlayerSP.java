@@ -17,6 +17,7 @@
 
 package baritone.launch.mixins;
 
+import baritone.Baritone;
 import baritone.api.BaritoneAPI;
 import baritone.api.IBaritone;
 import baritone.api.behavior.IPathingBehavior;
@@ -33,6 +34,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
  * @author Brady
@@ -121,5 +123,29 @@ public class MixinEntityPlayerSP {
     )
     private void updateRidden(CallbackInfo cb) {
         ((LookBehavior) BaritoneAPI.getProvider().getBaritoneForPlayer((EntityPlayerSP) (Object) this).getLookBehavior()).pig();
+    }
+
+    @Inject(
+            method = "isCurrentViewEntity",
+            at = @At(
+                    value = "HEAD"
+            ),
+            cancellable = true
+    )
+    private void isCurrentViewEntity(CallbackInfoReturnable<Boolean> cb) {
+        // never called during frame I think
+        cb.setReturnValue(BaritoneAPI.getProvider().getPrimaryBaritone().getPlayerContext().player() == (EntityPlayerSP) (Object) this);
+    }
+
+    @Inject(
+            method = "isUser",
+            at = @At("HEAD"),
+            cancellable = true
+    )
+    private void isUser(CallbackInfoReturnable<Boolean> callback) {
+        Baritone baritone = (Baritone) BaritoneAPI.getProvider().getPrimaryBaritone();
+        if (baritone.getFreecamBehavior().enabled() && baritone.getFreecamBehavior().realPlayer() == (EntityPlayerSP) (Object) this) {
+            callback.setReturnValue(false);
+        }
     }
 }

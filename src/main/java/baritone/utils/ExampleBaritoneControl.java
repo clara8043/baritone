@@ -162,6 +162,12 @@ public class ExampleBaritoneControl extends Behavior implements Helper {
             return true;
         }
 
+        if (msg.equals("come")) {
+            customGoalProcess.setGoal(new GoalBlock(new BlockPos(baritone.getFreecamBehavior().getEntity())));
+            customGoalProcess.path();
+            logDirect("Coming");
+            return true;
+        }
         if (msg.startsWith("goal")) {
             String[] params = msg.substring(4).trim().split(" ");
             if (params[0].equals("")) {

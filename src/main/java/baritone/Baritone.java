@@ -75,6 +75,7 @@ public class Baritone implements IBaritone {
 
     private List<Behavior> behaviors;
     private PathingBehavior pathingBehavior;
+    private FreecamBehavior freecamBehavior;
     private LookBehavior lookBehavior;
     private MemoryBehavior memoryBehavior;
     private InputOverrideHandler inputOverrideHandler;
@@ -110,6 +111,7 @@ public class Baritone implements IBaritone {
             new InventoryBehavior(this);
             inputOverrideHandler = new InputOverrideHandler(this);
             new ExampleBaritoneControl(this);
+            freecamBehavior = new FreecamBehavior(this);
         }
 
         this.pathingControlManager = new PathingControlManager(this);
@@ -141,6 +143,10 @@ public class Baritone implements IBaritone {
     public void registerBehavior(Behavior behavior) {
         this.behaviors.add(behavior);
         this.gameEventHandler.registerEventListener(behavior);
+    }
+
+    public FreecamBehavior getFreecamBehavior() {
+        return this.freecamBehavior;
     }
 
     @Override

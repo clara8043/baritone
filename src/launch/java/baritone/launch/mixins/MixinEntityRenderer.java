@@ -17,13 +17,20 @@
 
 package baritone.launch.mixins;
 
+import baritone.Baritone;
 import baritone.api.BaritoneAPI;
 import baritone.api.IBaritone;
 import baritone.api.event.events.RenderEvent;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.client.renderer.EntityRenderer;
+import net.minecraft.entity.Entity;
+import net.minecraft.world.GameType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(EntityRenderer.class)
@@ -41,5 +48,82 @@ public class MixinEntityRenderer {
         for (IBaritone ibaritone : BaritoneAPI.getProvider().getAllBaritones()) {
             ibaritone.getGameEventHandler().onRenderPass(new RenderEvent(partialTicks));
         }
+    }
+
+    EntityPlayerSP stash;
+    PlayerControllerMP stash2;
+
+    @Inject(
+            method = "updateCameraAndRender",
+            at = @At(
+                    "HEAD"
+            )
+    )
+    private void ohgod(CallbackInfo ci) {
+        Baritone baritone = (Baritone) BaritoneAPI.getProvider().getPrimaryBaritone();
+        if (baritone.getFreecamBehavior().enabled()) {
+            stash = Minecraft.getMinecraft().player;
+            stash2 = Minecraft.getMinecraft().playerController;
+            Minecraft.getMinecraft().player = baritone.getFreecamBehavior().getEntity();
+            Minecraft.getMinecraft().playerController = new PlayerControllerMP(Minecraft.getMinecraft(), stash.connection);
+            Minecraft.getMinecraft().playerController.setGameType(GameType.CREATIVE);
+        }
+    }
+
+    @Inject(method = "updateCameraAndRender",
+            at = @At(
+                    "RETURN"
+            )
+    )
+    private void ohgod2(CallbackInfo ci) {
+        if (stash != null) {
+            Minecraft.getMinecraft().player = stash;
+            Minecraft.getMinecraft().playerController = stash2;
+            stash = null;
+            stash2 = null;
+        }
+    }
+
+
+    @Inject(
+            method = "updateRenderer",
+            at = @At(
+                    "HEAD"
+            )
+    )
+    private void ohgod3(CallbackInfo ci) {
+        Baritone baritone = (Baritone) BaritoneAPI.getProvider().getPrimaryBaritone();
+        if (baritone.getFreecamBehavior().enabled()) {
+            stash = Minecraft.getMinecraft().player;
+            stash2 = Minecraft.getMinecraft().playerController;
+            Minecraft.getMinecraft().player = baritone.getFreecamBehavior().getEntity();
+            Minecraft.getMinecraft().playerController = new PlayerControllerMP(Minecraft.getMinecraft(), stash.connection);
+            Minecraft.getMinecraft().playerController.setGameType(GameType.CREATIVE);
+        }
+    }
+
+    @Inject(method = "updateRenderer",
+            at = @At(
+                    "RETURN"
+            )
+    )
+    private void ohgod4(CallbackInfo ci) {
+        if (stash != null) {
+            Minecraft.getMinecraft().player = stash;
+            Minecraft.getMinecraft().playerController = stash2;
+            stash = null;
+            stash2 = null;
+        }
+    }
+
+    @Redirect(
+            method = "getMouseOver",
+            at = @At(
+                    value = "INVOKE",
+                    target = "net/minecraft/client/Minecraft.getRenderViewEntity()Lnet/minecraft/entity/Entity;"
+            )
+    )
+    private Entity getRenderViewEntity() {
+        return Minecraft.getMinecraft().player;
     }
 }

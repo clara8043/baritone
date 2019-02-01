@@ -19,6 +19,7 @@ package baritone.launch.mixins;
 
 import baritone.api.BaritoneAPI;
 import baritone.api.event.events.RotationMoveEvent;
+import baritone.behavior.FreecamBehavior;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -51,7 +52,7 @@ public class MixinEntity {
     )
     private void preMoveRelative(float strafe, float up, float forward, float friction, CallbackInfo ci) {
         // noinspection ConstantConditions
-        if (EntityPlayerSP.class.isInstance(this)) {
+        if (EntityPlayerSP.class.isInstance(this) && !FreecamBehavior.FreecamPlayerUwu.class.isInstance(this)) {
             this.motionUpdateRotationEvent = new RotationMoveEvent(RotationMoveEvent.Type.MOTION_UPDATE, this.rotationYaw);
             BaritoneAPI.getProvider().getBaritoneForPlayer((EntityPlayerSP) (Object) this).getGameEventHandler().onPlayerRotationMove(this.motionUpdateRotationEvent);
         }
@@ -66,7 +67,7 @@ public class MixinEntity {
             )
     )
     private float overrideYaw(Entity self) {
-        if (self instanceof EntityPlayerSP) {
+        if (self instanceof EntityPlayerSP && !FreecamBehavior.FreecamPlayerUwu.class.isInstance(self)) {
             return this.motionUpdateRotationEvent.getYaw();
         }
         return self.rotationYaw;
