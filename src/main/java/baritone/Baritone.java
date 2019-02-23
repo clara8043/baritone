@@ -118,6 +118,7 @@ public class Baritone implements IBaritone {
             customGoalProcess = new CustomGoalProcess(this); // very high iq
             getToBlockProcess = new GetToBlockProcess(this);
             builderProcess = new BuilderProcess(this);
+            new BackfillProcess(this);
         }
 
         this.worldProvider = new WorldProvider();

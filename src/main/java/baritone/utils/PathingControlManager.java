@@ -85,6 +85,7 @@ public class PathingControlManager implements IPathingControlManager {
         inControlThisTick = null;
         PathingBehavior p = baritone.getPathingBehavior();
         command = executeProcesses();
+        System.out.println("Process uwu " + command + " " + p.isPathing() + " " + p.getInProgress().isPresent());
         if (command == null) {
             p.cancelSegmentIfSafe();
             return;
@@ -184,9 +185,9 @@ public class PathingControlManager implements IPathingControlManager {
             PathingCommand exec = proc.onTick(Objects.equals(proc, inControlLastTick) && baritone.getPathingBehavior().calcFailedLastTick(), baritone.getPathingBehavior().isSafeToCancel());
             if (exec == null) {
                 if (proc.isActive()) {
-                    throw new IllegalStateException(proc.displayName() + " returned null PathingCommand");
+                    //throw new IllegalStateException(proc.displayName() + " returned null PathingCommand");
                 }
-                proc.onLostControl();
+                //proc.onLostControl();
             } else {
                 inControlThisTick = proc;
                 if (!proc.isTemporary()) {

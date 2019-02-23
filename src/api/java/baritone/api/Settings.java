@@ -240,6 +240,8 @@ public final class Settings {
      */
     public final Setting<Boolean> enterPortal = new Setting<>(true);
 
+    public final Setting<Boolean> backfill = new Setting<>(false);
+
     /**
      * Don't repropagate cost improvements below 0.01 ticks. They're all just floating point inaccuracies,
      * and there's no point.
